@@ -50,6 +50,46 @@ For the browser interface, run:
 npx --yes @modelcontextprotocol/inspector@2.11.0 ./bin/go-mcp-starter
 ```
 
+## Test in Claude Desktop (macOS)
+
+Manually tested with Claude Desktop on macOS on 2026-10-21.
+Build the binary using steps 1 and 2 above, then configure Claude Desktop:
+
+1. Open Claude Desktop's app settings, choose **Developer**, and click **Edit Config**.
+
+   The configuration file is `~/Library/Application Support/Claude/claude_desktop_config.json`.
+
+2. Add this server entry, keeping any existing entries in `mcpServers`.
+
+   ```json
+   {
+     "mcpServers": {
+       "go-mcp-starter": {
+         "command": "/absolute/path/to/go-mcp-starter/bin/go-mcp-starter",
+         "args": []
+       }
+     }
+   }
+   ```
+
+   Replace `/absolute/path/to/go-mcp-starter` with the output of `pwd` from the repository root.
+
+3. Save the file, fully quit Claude Desktop with `Cmd+Q`, and reopen it.
+
+   Claude launches the compiled binary automatically and communicates with it over stdio.
+
+4. Click **+ → Connectors** in the chat box and confirm that `go-mcp-starter` exposes the `add` tool.
+
+5. Send this prompt:
+
+   > Use the add tool from go-mcp-starter to add 12 and 30.
+
+   Confirm an actual `add` tool call with `a: 12` and `b: 30`, returning `{"sum":42}`.
+   An answer of 42 alone does not verify that Claude used the server.
+
+For connection errors, check the server status and logs in Developer settings.
+See the [official local-server setup guide](https://modelcontextprotocol.io/docs/2026-07-28/develop/connect-local-servers) for configuration and restart details.
+
 ## Tool contract
 
 `add` performs read-only arithmetic with no filesystem or network access.
